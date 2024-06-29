@@ -1,30 +1,37 @@
-# React + TypeScript + Vite
+# AI Chat APP
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AIとチャットを行えるアプリ
 
-Currently, two official plugins are available:
+## 技術スタック
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- フロントエンド: React, TypeScript, Vite
+- バックエンド: VOICEBOXのDocker版
 
-## Expanding the ESLint configuration
+## セットアップ手順
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. リポジトリをクローンします。
 
-- Configure the top-level `parserOptions` property like this:
+```sh
+git clone <リポジトリURL>
+cd frontend
+pnpm install
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+2. フロントエンドの依存関係をインストールします。
+
+```sh
+pnpm run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. フロントエンドアプリケーションを開発モードで起動します。
+
+```sh
+pnpm run dev
+```
+
+1. 別のターミナルで、VOICEBOXを起動します。
+
+```sh
+cd ../backend
+docker-compose up
+```
+
