@@ -1,0 +1,44 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.chat-app {
+  background-color: #f0f9ff; /* より明るい青色の背景 */
+  box-sizing: border-box;
+  color: #1e3a8a; /* 濃い青色のテキスト */
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  padding: 1rem;
+  width: 100vw;
+}
+
+.app-title {
+  color: #1e40af; /* より濃い青色のタイトル */
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.chat-container {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 10%),
+    0 1px 2px 0 rgb(0 0 0 / 6%);
+  flex: 1;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+  padding: 1rem;
+}

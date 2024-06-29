@@ -1,0 +1,36 @@
+.message-wrapper {
+  align-items: flex-start;
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.user-message {
+  justify-content: flex-end;
+}
+
+.bot-message {
+  justify-content: flex-start;
+}
+
+.message {
+  border-radius: 0.375rem;
+  color: #1e3a8a; /* 濃い青色のテキスト */
+  max-width: 70%;
+  padding: 0.5rem;
+}
+
+.user-message .message {
+  background-color: #dbeafe; /* より明るい青色の背景 */
+}
+
+.bot-message .message {
+  background-color: #d1fae5; /* より明るい緑色の背景 */
+}
+
+.user-icon {
+  color: #2563eb;
+}
+
+.bot-icon {
+  color: #059669;
+}
