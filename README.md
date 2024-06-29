@@ -35,3 +35,20 @@ cd ../backend
 docker-compose up
 ```
 
+## AWSへのデプロイ方法
+
+infraディレクトリにあるproviders.tfのprofileを変更する
+
+デプロイ
+```sh
+
+cd infra
+terraform apply
+```
+
+フロントエンドデプロイ
+infra/ecr_push.shのPROFILEとFRONTEND_ECR_URIを変更し、以下のコマンドを実行する
+
+```sh
+sh ecr_push.sh
+```
