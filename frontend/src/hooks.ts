@@ -42,7 +42,7 @@ export const useChat = () => {
     async (text: string): Promise<Query | null> => {
       try {
         const res = await superagent
-          .post("http://localhost:50021/audio_query")
+          .post(`http://${ import.meta.env.VITE_VOICEVOX_URL}:50021/audio_query`)
           .query({ speaker: 1, text: text });
 
         return res.body as Query;
@@ -58,7 +58,7 @@ export const useChat = () => {
     async (query: Query): Promise<Blob | null> => {
       try {
         const res = await superagent
-          .post("http://localhost:50021/synthesis")
+          .post(`http://${  import.meta.env.VITE_VOICEVOX_URL}:50021/synthesis`)
           .query({ speaker: 1 })
           .send(query)
           .responseType("blob");

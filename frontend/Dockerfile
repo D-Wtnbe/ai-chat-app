@@ -1,5 +1,5 @@
 # ベースイメージとして Node.js 20 を使用
-FROM --platform=linux/arm64 node:20-slim
+FROM --platform=linux/arm64 node:20-alpine
 
 # 作業ディレクトリを設定
 WORKDIR /app
