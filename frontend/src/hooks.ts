@@ -1,10 +1,15 @@
 import "regenerator-runtime";
-import { useState, useCallback, useRef } from "react";
-import superagent from "superagent";
+import { useState, useCallback, useRef, useMemo } from "react";
+import Client from "voicevox-client";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { Message, Query } from "./types";
+
+interface Message {
+  id: number;
+  text: string;
+  sender: "user" | "bot";
+}
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -12,6 +17,9 @@ export const useChat = () => {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isProcessingAudio, setIsProcessingAudio] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const client = useMemo(() => new Client(`http://${ import.meta.env.VITE_VOICEVOX_URL}:50021`), []);
+
 
   const { resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition({
@@ -29,64 +37,41 @@ export const useChat = () => {
 
   const generateBotResponse = useCallback((): string => {
     const responses: string[] = [
-      "それは面白い質問だね！もっと詳しく教えてくれる？",
-      "すごいね！そのことについてどう思う？",
-      "なるほど。他に何か知りたいことはある？",
+      "わあ、おもしろい質問だね！もっと教えてくれるかな？",
+      "すごいね！君はどう思う？",
+      "なるほど。他に知りたいことある？",
       "よく考えたね。他の例も思いつく？",
-      "その考え方はとてもクリエイティブだよ！",
+      "そのアイデア、とってもクリエイティブだよ！",
+      "わくわくする話だね！もっと聞かせて！",
+      "君の考えは本当に面白いね。どうしてそう思ったの？",
+      "素晴らしい質問だよ！一緒に考えてみよう！",
+      "へぇ、そうなんだ！他にも知ってることはある？",
+      "君の想像力はすごいね！もっと詳しく教えて！",
     ];
     return responses[Math.floor(Math.random() * responses.length)];
   }, []);
 
-  const createQuery = useCallback(
-    async (text: string): Promise<Query | null> => {
-      try {
-        const res = await superagent
-          .post(`http://${ import.meta.env.VITE_VOICEVOX_URL}:50021/audio_query`)
-          .query({ speaker: 1, text: text });
-
-        return res.body as Query;
-      } catch (error) {
-        console.error("Error creating query:", error);
-        return null;
-      }
-    },
-    []
-  );
-
-  const createVoice = useCallback(
-    async (query: Query): Promise<Blob | null> => {
-      try {
-        const res = await superagent
-          .post(`http://${  import.meta.env.VITE_VOICEVOX_URL}:50021/synthesis`)
-          .query({ speaker: 1 })
-          .send(query)
-          .responseType("blob");
-
-        return res.body as Blob;
-      } catch (error) {
-        console.error("Error creating voice:", error);
-        return null;
-      }
-    },
-    []
-  );
-
   const speakBotResponse = useCallback(
     async (text: string) => {
       setIsProcessingAudio(true);
-      const query = await createQuery(text);
-      if (query) {
-        const audioData = await createVoice(query);
-        if (audioData && audioRef.current) {
-          const audioUrl = window.URL.createObjectURL(audioData);
-          audioRef.current.src = audioUrl;
-          audioRef.current.play();
+      try {
+        if (client) {
+          const speakerId = 1; // ずんだもんボイス
+          const audioQuery = await client.createAudioQuery(text, speakerId);
+          const audio = audioQuery.synthesis(speakerId);
+          if (audioRef.current) {
+            const audioArrayBuffer = await audio;
+            const blob = new Blob([audioArrayBuffer], { type: "audio/wav" });
+            audioRef.current.src = URL.createObjectURL(blob);
+            await audioRef.current.play();
+          }
         }
+      } catch (error) {
+        console.error("Error speaking bot response:", error);
       }
       setIsProcessingAudio(false);
     },
-    [createQuery, createVoice]
+    [client]
   );
 
   const sendMessage = useCallback(async (): Promise<void> => {

@@ -26,7 +26,7 @@
     "stylelint": "^16.6.1",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-order": "^6.0.4",
-    "superagent": "^9.0.2"
+    "voicevox-client": "^0.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
