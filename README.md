@@ -5,7 +5,7 @@ AIとチャットを行えるアプリ
 ## 技術スタック
 
 - フロントエンド: React, TypeScript, Vite
-- バックエンド: VOICEBOXのDocker版
+- バックエンド: VOICEVOXのDocker版
 
 ## セットアップ手順
 
@@ -28,7 +28,7 @@ pnpm run dev
 pnpm run dev
 ```
 
-1. 別のターミナルで、VOICEBOXを起動します。
+1. 別のターミナルで、VOICEVOXを起動します。
 
 ```sh
 cd ../backend
