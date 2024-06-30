@@ -13,11 +13,36 @@ resource "aws_ecs_task_definition" "frontend" {
   container_definitions = jsonencode([{
     name  = "frontend"
     image = "${var.frontend_repository_url}:latest"
+
+    environment = [
+      {
+        name  = "VITE_VOICEVOX_URL"
+        value = var.alb_dns_name
+      }
+    ]
+
     portMappings = [{
       containerPort = 5173
       hostPort      = 5173
     }]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = "/ecs/${var.project_name}-frontend"
+        awslogs-region        = "ap-northeast-1"
+        awslogs-stream-prefix = "ecs"
+      }
+    }
   }])
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "ARM64"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "frontend" {
+  name              = "/ecs/${var.project_name}-frontend"
+  retention_in_days = 30
 }
 
 resource "aws_ecs_service" "frontend" {
@@ -58,6 +83,12 @@ resource "aws_security_group" "ecs_tasks" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    from_port       = 50021
+    to_port         = 50021
+    protocol        = "tcp"
+    security_groups = [var.alb_sg]
+  }
 }
 
 resource "aws_ecs_service" "backend" {
@@ -74,7 +105,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.backend.arn
+    target_group_arn = var.backend_target_group_arn
     container_name   = "voicevox_engine"
     container_port   = 50021
   }
@@ -101,8 +132,12 @@ resource "aws_ecs_task_definition" "backend" {
       essential = true
       environment = [
         {
-          name  = "TZ",
-          value = "Asia/Tokyo"
+          name  = "ALLOWED_HOSTS"
+          value = "*"
+        },
+        {
+          name  = "CORS_ORIGINS"
+          value = var.alb_dns_name
         }
       ]
       logConfiguration = {
@@ -118,36 +153,11 @@ resource "aws_ecs_task_definition" "backend" {
 
   runtime_platform {
     operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64" # VOICEVOX エンジンは ARM 対応していない可能性があるため、x86 を使用
+    cpu_architecture        = "X86_64"
   }
 }
 
 resource "aws_cloudwatch_log_group" "backend" {
   name              = "/ecs/${var.project_name}-backend"
   retention_in_days = 30
-}
-
-resource "aws_security_group_rule" "backend_inbound" {
-  type              = "ingress"
-  from_port         = 50021
-  to_port           = 50021
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.ecs_tasks.id
-}
-
-resource "aws_lb_target_group" "backend" {
-  name        = "${var.project_name}-backend-tg"
-  port        = 50021
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "ip"
-
-  health_check {
-    path                = "/"
-    healthy_threshold   = 2
-    unhealthy_threshold = 10
-    timeout             = 30
-    interval            = 60
-  }
 }

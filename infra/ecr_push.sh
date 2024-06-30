@@ -16,8 +16,8 @@ if [ ! -f Dockerfile ]; then
     echo "エラー: Dockerfileが見つかりません。カレントディレクトリ: $(pwd)"
     exit 1
 fi
-docker buildx create --use
-docker buildx build --platform linux/arm64 --load -t frontend-image .
+docker build --platform linux/arm64 --load -t frontend-image .
+
 echo "フロントエンドイメージをタグ付けしています..."
 docker tag frontend-image:latest $FRONTEND_ECR_URI:latest
 echo "フロントエンドイメージをプッシュしています..."
