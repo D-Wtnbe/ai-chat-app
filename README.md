@@ -25,7 +25,7 @@ pnpm install
 2. フロントエンドの依存関係をインストールします。
 
 ```sh
-pnpm run dev
+pnpm install
 ```
 
 3. フロントエンドアプリケーションを開発モードで起動します。
