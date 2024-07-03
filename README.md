@@ -10,7 +10,13 @@ AWSへのデプロイはTerraformで自動的に行えるが、CORSの関係でV
 
 - フロントエンド: React, TypeScript, Vite
 - バックエンド: VOICEVOXのDocker版
-- インフラ：ECS(fargate)、ALB、Terraform
+- インフラ：
+  - AWS
+    - ECS(fargate)
+    - ECR
+    - ALB
+  - IaC
+    - Terraform
 
 ## セットアップ手順
 
